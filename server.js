@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var request = require("request");
 var cheerio = require("cheerio");
+var Article = require('./models/article.js');
+var Comment = require('./models/comment.js');
 
 
 var port = process.env.PORT || 3000;
@@ -36,6 +38,25 @@ db.on("error", function(error) {
 db.once("open", function() {
   console.log("Mongoose connection successful.");
 });
+
+app.get("/", function(req, res){
+	res.render('index');
+});
+
+app.get("/scrape", function(req, res){
+	request("https://arstechnica.com/", function(error, response, html) {
+		var $ = cheerio.load(html);
+		//console.log(html);
+		$("listing.listing-latest").each(function(i, element){
+			var result = {};
+			result.title = $(this).
+			console.log(result);
+		});
+	});
+	// console.log("route works");
+});
+
+
 
 app.listen(port, function() {
   console.log("App running on port " + port);
