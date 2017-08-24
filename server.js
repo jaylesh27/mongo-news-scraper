@@ -29,12 +29,12 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://localhost/newsScraper");
-var db = mongoose.connection;
+// mongoose.connect("mongodb://localhost/newsScraper");
+// var db = mongoose.connection;
 
 // Database Configuration with mongoose for heroku deployment
-// mongoose.connect("mongodb://heroku_1qfxr0rr:60dqrf47j8t2lotj3lmf1lq1nm@ds029338.mlab.com:29338/heroku_1qfxr0rr");
-// var db = mongoose.connection;
+mongoose.connect("mongodb://heroku_1qfxr0rr:60dqrf47j8t2lotj3lmf1lq1nm@ds029338.mlab.com:29338/heroku_1qfxr0rr");
+var db = mongoose.connection;
 
 
 // Show any mongoose errors
