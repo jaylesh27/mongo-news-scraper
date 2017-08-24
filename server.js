@@ -29,12 +29,12 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-// mongoose.connect("mongodb://localhost/newsScraper");
-// var db = mongoose.connection;
+mongoose.connect("mongodb://localhost/newsScraper");
+var db = mongoose.connection;
 
 // Database Configuration with mongoose for heroku deployment
-mongoose.connect("mongodb://heroku_1qfxr0rr:60dqrf47j8t2lotj3lmf1lq1nm@ds029338.mlab.com:29338/heroku_1qfxr0rr");
-var db = mongoose.connection;
+// mongoose.connect("mongodb://heroku_1qfxr0rr:60dqrf47j8t2lotj3lmf1lq1nm@ds029338.mlab.com:29338/heroku_1qfxr0rr");
+// var db = mongoose.connection;
 
 
 // Show any mongoose errors
@@ -59,7 +59,8 @@ app.get("/scrape", function(req, res){
 			//save the titles and linkes from the scraped website to the results object
 			result.title = $(this).children("header").find("a").text();
 			result.link = $(this).children("header").find("a").attr("href");
-			console.log(result);
+			result.pic = $(this).children("figure").find(".listing.listing-small").attr("style")
+			//console.log(result);
 
 			var entry = new Article(result);
 
@@ -72,7 +73,7 @@ app.get("/scrape", function(req, res){
 			});
 		});
 	});
-	res.send("Scrape Complete");
+	res.render("scrape-done");
 });
 
 app.get("/articles", function(req, res) {
@@ -84,9 +85,46 @@ app.get("/articles", function(req, res) {
     }
     // Or send the doc to the browser as a json object
     else {
-      res.json(doc);
+    	// var jsonDOC = JSON.stringify(doc);
+    	//console.log(doc);
+    	var hbsObject = {
+    		articles: doc
+    	}
+    	res.render("articles", hbsObject);
     }
   });
+});
+
+app.get("/articles/:id", function(req, res){
+	Article.findOne({"_id": req.params.id })
+	.populate("comment")
+	.exec(function(error, doc){
+		if (error) {
+			console.log(error);
+		}else {
+			res.json(doc);
+		}
+	});
+});
+
+app.post("/articles/:id", function(req, res){
+	var newComment = new Comment(req.body);
+
+	newComment.save(function(error, doc){
+		if (error) {
+			console.log(error);
+		}else {
+			Article.findOneAndUpdate({ "_id": req.params.id}, { "comment": doc._id})
+			.exec(function(err, doc){
+				if (err) {
+					console.log(err);
+				}else {
+					console.log(doc);
+					res.send(doc);
+				}
+			});
+		}
+	})
 });
 
 

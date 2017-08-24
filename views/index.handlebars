@@ -3,16 +3,3 @@
   <p>Click the button to show articles from Ars Technica.  You can also leave comments by clicking on an article</p>
   <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Start scrape</a></p>
 </div>
-
-<div class = "container">
-
-{{#each article}}
-<div class="panel panel-default">
-  <div class="panel-heading">{{this.title}}</div>
-  <div class="panel-body">
-    {{this.link}}
-  </div>
-</div>
-{{/each}}
-
-</div>
